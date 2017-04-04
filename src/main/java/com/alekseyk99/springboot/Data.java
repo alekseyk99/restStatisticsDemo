@@ -87,7 +87,7 @@ public class Data {
 		Statistic statistic = new Statistic();
 		statistic.setSum(sum);
 		statistic.setCount(count);
-		statistic.setMin(min);
+		statistic.setMin((count==0)?0:min);
 		statistic.setMax(max);
 		statistic.setAvg((count==0)?0:sum/count);
 		return statistic;
