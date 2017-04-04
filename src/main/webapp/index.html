@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spring Boot Hello World Example with JSP</title>
+
+</head>
+<body>
+
+    <script src="main.js"></script>
+
+<script>
+function sendTransaction(sum,container)
+{                                      
+    //Создаем функцию обработчик
+    var Handler = function(Request)
+    {
+//	alert(Request.responseXML);    
+
+    container.innerHTML = "Status " + Request.status + " text " + Request.responseText;
+
+//container.innerHTML = "123";
+    }
+    
+    //Отправляем запрос
+    SendRequest("POST","/transactions",'{ "amount": 15.52, "timestamp" : ' + new Date().getTime() +' }',Handler);
+    
+} 
+
+function getStatistics(container)
+{                                      
+    //Создаем функцию обработчик
+    var Handler = function(Request)
+    {
+	//alert(Request.responseText);    
+
+    container.innerHTML = Request.responseText;
+
+//container.innerHTML = "123";
+    }
+    
+    //Отправляем запрос
+    SendRequest("GET","/statistics","",Handler);
+    
+} 
+
+
+</script>
+    <h2>Spring Boot Hello World Example with JSP</h2>
+
+    <table>
+	<tr>
+<td>
+<input type="text" id="sum"/> 
+<br>
+<input type="button" value="Send" onclick="sendTransaction(document.getElementById('sum').value,document.getElementById('container'))" />
+<br>
+<span id=container>
+result
+</span>
+</td>
+</tr>
+	<tr>
+<td>
+<input type="button" value="Statistics" onclick="getStatistics(document.getElementById('showStatistics'))" />
+<br>
+<span id=showStatistics>
+result
+</span>
+</td>
+</tr>
+
+
+</table>
+</body>
+</html>
