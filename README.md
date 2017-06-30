@@ -1,7 +1,7 @@
 # restStatisticsDemo
 restfull API for statistics (Demo)
 
-REST Service that calculate transactional statistic.
+REST Service that calculates transaction statistic.
 
 - Input: Transactions (amount and time)
 - Output: Statistic for the last minute
