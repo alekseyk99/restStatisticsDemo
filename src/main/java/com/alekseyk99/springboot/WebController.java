@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class WebController {
 	
-   Data data;
+   Service data;
    private static final Logger logger = LoggerFactory.getLogger(WebController.class);
 
    
    @Autowired
-   public WebController(Data data) {
+   public WebController(Service data) {
 	   this.data = data;
    }
 

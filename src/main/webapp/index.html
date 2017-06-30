@@ -6,62 +6,82 @@
 
 </head>
 <body>
+<script src="/jquery.js"></script>
 
-    <script src="main.js"></script>
-
-<script>
-function sendTransaction(sum,container)
-{                                      
-    var Handler = function(Request)
-    {
-    container.innerHTML = "Status " + Request.status;
-    }
-    
-    SendRequest("POST","/transactions",'{ "amount": '+document.getElementById('sum').value+', "timestamp" : ' + document.getElementById('timestamp').value +' }',Handler);
-    
-} 
-
-function getStatistics(container)
-{                                      
-    var Handler = function(Request)
-    {
-    container.innerHTML = Request.responseText;
-    }
-    
-    SendRequest("GET","/statistics","",Handler);
-    
-} 
-
-
-</script>
     <h2>Test REST API Statistic</h2>
-
     <table>
-	<tr>
-<td>
-<input type="text" id="sum" value="1.1"/>  <input type="text" id="timestamp"/>
-<br>
-<input type="button" value="Send" onclick="sendTransaction(document.getElementById('sum').value,document.getElementById('container'))" />
-<br>
-<span id=container>
-result
-</span>
-</td>
-</tr>
-	<tr>
-<td>
-<input type="button" value="Statistics" onclick="getStatistics(document.getElementById('showStatistics'))" />
-<br>
-<span id=showStatistics>
-result
-</span>
-</td>
-</tr>
+        <tr>
+            <td>
+                Amount <input type="text" id="sum" value="10"/>  
+                Time <input type="text" id="timestamp"/>
+		<input id="getTime" type="button" value="Get current time" /> 
+                <br>
+		<input id="sendButton" type="button" value="Send data" />
+                <span id=container></span>
+                <br>
+                <br>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input id="getStatistics" type="button" value="Get statistics" />
+                <br><br>
+                <div id=showStatistics>
+                </div>
+           </td>
+       </tr>
+    </table>
 
-
-</table>
 <script>
-document.getElementById('timestamp').value= new Date().getTime();
+
+    $("#getTime").click(function(){
+        $("#timestamp").val(new Date().getTime());
+    });
+
+    $("#sendButton").click(function(){
+
+        $.ajax({
+            type: "POST",
+            url: "/transactions",
+            data: JSON.stringify( { "amount": $("#sum").val(), "timestamp" : $("#timestamp").val() } ),
+            contentType: "application/json; charset=utf-8",
+            complete: function(data,status)  {
+		$("#container").html(data.statusText);
+		setTimeout(function() {
+		    $("#container").html("");
+		},3000);
+            }
+        });
+    });                                                                    		
+
+    $("#getStatistics").click(function(){
+	//alert("send");
+        $.ajax({
+            type: "GET",
+            url: "/statistics",
+	    //dataType: "text",
+            success: function(result) {
+		//alert("send ok");
+		$("#showStatistics").html(
+			"sum= <b>"+
+			result.sum+
+			"</b><br>avg= <b>"+
+			result.avg+
+			"</b><br>min= <b>"+
+			result.min+
+			"</b><br>max= <b>"+
+			result.max+
+			"</b><br>count= <b>"+
+			result.count+
+			"</b><br>");
+            },
+            complete: function(data,status)  {
+            }
+        });
+    });                                                                    		
+
+    $("#timestamp").val(new Date().getTime());
+
 </script>
 </body>
 </html>

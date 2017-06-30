@@ -14,7 +14,14 @@
         <version>1.3.5.RELEASE</version>
   </parent>
   
-  
+   <properties>
+	<maven.compiler.source>1.8</maven.compiler.source>
+	<maven.compiler.target>1.8</maven.compiler.target>
+	<junit.version>4.12</junit.version>
+	<slf4j.version>1.7.21</slf4j.version>
+	<log4j.version>1.7.21</log4j.version>
+  </properties>
+ 
   <dependencies>
   
     <dependency>
@@ -29,9 +36,10 @@
     </dependency>
   
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
     </dependency>
 
 
@@ -43,13 +51,21 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
-	<plugin>
+	    <plugin>
         	<artifactId>maven-war-plugin</artifactId>
         	<version>3.0.0</version>
         	<configuration>
-          		<packagingExcludes>index.html,main.js</packagingExcludes>
+          		<packagingExcludes>index.html,jquery.js</packagingExcludes>
         	</configuration>
-      	</plugin>
+      	    </plugin>
+            <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <configuration>
+                        <mainClass>com.alekseyk99.springboot.WebApplication</mainClass>
+                    </configuration>
+            </plugin>
+
         </plugins>
       <finalName>restStatisticsDemo</finalName>
   </build>

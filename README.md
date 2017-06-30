@@ -1,19 +1,27 @@
 # restStatisticsDemo
-restfull API for statistics
+restfull API for statistics (Demo)
 
+REST Service that calculate transactional statistic.
 
+- Input: Transactions (amount and time)
+- Output: Statistic for the last minute
 
 ## Run
-`mvn spring-boot:run`
 
-Test page
+$ mvn spring-boot:run
 
-http://127.0.0.1:8080/index.html
+## Test page
 
-## Limitations
+http://localhost:8080
 
-I assume that a 1 second precision would be enough and 
-if not, you can change CAPACITY and DIVISOR constants 
-(for example for 1 millisecond: CAPACITY=60000 DIVISOR=1).
+## Keyword
+
+- Spring Boot
+- Rest
+- Java
+- Maven
+- jUnit
+- jQuery
+
 
 
