@@ -2,7 +2,6 @@ package com.alekseyk99.springboot;
 
 import static org.junit.Assert.*;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ServiceTest {
@@ -11,7 +10,7 @@ public class ServiceTest {
 
 	@Test
 	public void testStatistic() throws InterruptedException {
-		Service service = new Service();
+		TransactionStatisticsService service = new TransactionStatisticsService();
 		long time = System.currentTimeMillis();
 		Statistic statistic = service.getStatistic();
 		assertEquals("Step1 Sum", 0, statistic.getSum(), DELTA);

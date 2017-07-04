@@ -1,5 +1,11 @@
 package com.alekseyk99.springboot;
 
+/** 
+ * Stores statistic data
+ * 
+ * @author Aleksei Korchak
+ *
+ */
 public class Statistic {
 	
 	private double sum, avg, max, min;

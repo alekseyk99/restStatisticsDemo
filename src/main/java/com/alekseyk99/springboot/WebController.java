@@ -14,17 +14,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-
+/**
+ * Handles requests "/transactions" and "/statistics"
+ */
 @RestController
 public class WebController {
 	
-   Service data;
+   TransactionStatisticsService service;
    private static final Logger logger = LoggerFactory.getLogger(WebController.class);
 
    
    @Autowired
-   public WebController(Service data) {
-	   this.data = data;
+   public WebController(TransactionStatisticsService service) {
+	   this.service = service;
    }
 
    @RequestMapping(value="/transactions", method=RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -38,7 +40,7 @@ public class WebController {
 	   if (transaction.getAmount() == 0) throw new IllegalArgumentException("amount can't be 0");
 	   if (transaction.getTimestamp() == 0) throw new IllegalArgumentException("timestamp can't be 0");
 			   
-       data.addTransaction(transaction);
+       service.addTransaction(transaction);
        return new ResponseEntity<String>(HttpStatus.CREATED);
    }
 
@@ -47,7 +49,7 @@ public class WebController {
 	   
 	    logger.debug("GET statistics");
 	   
-    	Statistic statistic = data.getStatistic();
+    	Statistic statistic = service.getStatistic();
     	logger.info(statistic.toString());
     	
     	return statistic;

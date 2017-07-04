@@ -1,5 +1,12 @@
 package com.alekseyk99.springboot;
 
+
+/** 
+ * Stores transaction data
+ * 
+ * @author Aleksei Korchak
+ *
+ */
 public class Transaction {
 	
 	private double amount;
