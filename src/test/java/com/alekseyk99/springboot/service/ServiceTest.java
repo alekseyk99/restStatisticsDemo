@@ -1,8 +1,10 @@
-package com.alekseyk99.springboot;
+package com.alekseyk99.springboot.service;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import com.alekseyk99.springboot.dto.Statistic;
+import com.alekseyk99.springboot.dto.Transaction;
 
 public class ServiceTest {
 	
@@ -19,9 +21,7 @@ public class ServiceTest {
 		assertEquals("Step1 Avg", 0, statistic.getAvg(), DELTA);
 		assertEquals("Step1 Count", 0, statistic.getCount());
 		
-		Transaction transaction = new Transaction();
-		transaction.setAmount(10);
-		transaction.setTimestamp(time-59000);
+		Transaction transaction = new Transaction(10, time-59000);
 		service.addTransaction(transaction);
 		statistic = service.getStatistic();
 		assertEquals("Step2 Sum", 10, statistic.getSum(), DELTA);
@@ -30,8 +30,7 @@ public class ServiceTest {
 		assertEquals("Step2 Avg", 10, statistic.getAvg(), DELTA);
 		assertEquals("Step2 Count", 1, statistic.getCount());
 		
-		transaction.setAmount(20);
-		transaction.setTimestamp(time-58000);
+		transaction = new Transaction(20, time-58000);
 		service.addTransaction(transaction);
 		statistic = service.getStatistic();
 		assertEquals("Step3 Sum", 30, statistic.getSum(), DELTA);

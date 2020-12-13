@@ -1,9 +1,11 @@
-package com.alekseyk99.springboot;
+package com.alekseyk99.springboot.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
+import com.alekseyk99.springboot.dto.Statistic;
+import com.alekseyk99.springboot.dto.Transaction;
 
 /** 
  * Keeps track of transactions and calculates general statistics
@@ -23,12 +25,19 @@ public class TransactionStatisticsService {
 
 	final Entry[] entries  = new Entry[CAPACITY];
 	
+   public TransactionStatisticsService() {
+        for (int i=0; i< entries.length; i++){
+            entries[i]=new Entry();
+        }
+    }
+
 	/**
 	 * Keeps statistic of particular time slot 
 	 * 
 	 */
-	static class Entry {
-		private long time;
+	private class Entry {
+	    
+		private long slotTime; // = timestamp/INTERVAL_SIZE
 		private double sum;
 		private double min;
 		private double max;
@@ -36,12 +45,12 @@ public class TransactionStatisticsService {
 		
 		public Entry() {}
 		
-		public Entry(long time, double sum, double min, double max, long count) {
+		public Entry(long slotTime, double sum, double min, double max, long count) {
 			this.sum = sum;
 			this.min = min;
 			this.max = max;
 			this.count = count;
-			this.time = time;
+			this.slotTime = slotTime;
 		}
 		/**
 		 * Updates statistic if time is right
@@ -50,8 +59,7 @@ public class TransactionStatisticsService {
 		 * @param amount Amount of transaction
 		 */
 		synchronized void add(long time, double amount) {
-			if (this.time == time) {
-				// already holds data for that time
+			if (slotTime == time) { // slot holds data for that time, update
 				logger.debug("Same time"); 
 				sum += amount;
 				count++;
@@ -61,49 +69,29 @@ public class TransactionStatisticsService {
 				if (max < amount) {
 					max = amount;
 				}
-			} else if (this.time < time) {
-				// old data, replace
+			} else if (slotTime < time) { // added time is newer than existing, replace
 				logger.debug("old data"); 
-				this.time = time;
+				slotTime = time;
 				sum = amount;
-				count =1;
+				count = 1;
 				min = amount;
 				max = amount;
-			}  // else param time is too old
+			}  // else: added time is older than existing, skip
+
 		}
 		
+		/**
+		 * process only new data
+		 * 
+		 * @param startTimestampNormal
+		 * @return synchronized copy
+		 */
 		synchronized Entry get() {
-			return new Entry(time, sum, min, max, count);
+			return new Entry(slotTime, sum, min, max, count);
 		}
 
-		public long getTime() {
-			return time;
-		}
-
-		public double getSum() {
-			return sum;
-		}
-
-		public double getMin() {
-			return min;
-		}
-
-		public double getMax() {
-			return max;
-		}
-
-		public long getCount() {
-			return count;
-		}
 	}
 	
-	// constructor
-	public TransactionStatisticsService() {
-		for (int i=0; i< entries.length; i++){
-			entries[i]=new Entry();
-		}
-	}
-
 	/** 
 	 * Adds transaction information to statistics
 	 * 
@@ -112,12 +100,12 @@ public class TransactionStatisticsService {
 	public void addTransaction(Transaction transaction) {
 		
 		// Normalized transactionTimestamp
-		long transactionTimestampNormal = transaction.getTimestamp()/INTERVAL_SIZE;
+		long transactionSlotTime = transaction.getTimestamp()/INTERVAL_SIZE;
 		// index in entries to keep data
-		int index = (int)(transactionTimestampNormal % CAPACITY);
+		int index = (int)(transactionSlotTime % CAPACITY);
 		
-		logger.debug("addTransaction transactionTimestampNormal={} index={}", transactionTimestampNormal,index); 
-		entries[index].add(transactionTimestampNormal, transaction.getAmount());
+		logger.debug("addTransaction transactionSlotTime={} index={}", transactionSlotTime,index); 
+		entries[index].add(transactionSlotTime, transaction.getAmount());
 	}
 	
 	/**
@@ -132,9 +120,9 @@ public class TransactionStatisticsService {
 		// Normalized start of an interval 
 		long startTimestampNormal = System.currentTimeMillis()/INTERVAL_SIZE - CAPACITY;
 		logger.debug("getStatistic startTimestampNormal {}", startTimestampNormal); 
-		for (int i=0; i< entries.length; i++){ // for arrays its faster then foreach
+		for (int i=0; i< entries.length; i++) {
 			final Entry entry = entries[i].get();
-			if (entry.time > startTimestampNormal) { // process only new data and skip old one
+			if (entry.slotTime > startTimestampNormal) {
 				sum+=entry.sum;
 				count+=entry.count;
 				if (min > entry.min) {

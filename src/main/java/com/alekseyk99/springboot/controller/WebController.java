@@ -1,5 +1,6 @@
-package com.alekseyk99.springboot;
+package com.alekseyk99.springboot.controller;
 
+import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import com.alekseyk99.springboot.dto.Statistic;
+import com.alekseyk99.springboot.dto.Transaction;
+import com.alekseyk99.springboot.service.TransactionStatisticsService;
 
 /**
  * Handles requests "/transactions" and "/statistics"
@@ -31,11 +35,8 @@ public class WebController {
 
    @RequestMapping(value="/transactions", method=RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
    public ResponseEntity<String> transaction(@RequestBody Transaction transaction) throws Exception {
-	   logger.debug("POST transactions");
-   
-	   if (transaction ==null) throw new IllegalArgumentException("transaction can't be null");
-	   
-	   logger.info(transaction.toString());
+
+	   logger.info("POST transactions [{}]", transaction.toString());
     	
 	   if (transaction.getAmount() == 0) throw new IllegalArgumentException("amount can't be 0");
 	   if (transaction.getTimestamp() == 0) throw new IllegalArgumentException("timestamp can't be 0");
@@ -47,10 +48,8 @@ public class WebController {
    @RequestMapping(value="/statistics", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
    public Statistic statistics() {
 	   
-	    logger.debug("GET statistics");
-	   
     	Statistic statistic = service.getStatistic();
-    	logger.info(statistic.toString());
+    	logger.info("GET statistics [{}]", statistic.toString());
     	
     	return statistic;
     }

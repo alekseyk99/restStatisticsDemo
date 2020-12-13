@@ -1,17 +1,24 @@
-package com.alekseyk99.springboot;
+package com.alekseyk99.springboot.dto;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /** 
  * Stores statistic data
  * 
- * @author Aleksei Korchak
- *
  */
 public class Statistic {
 	
-	private double sum, avg, max, min;
-	private long count;
+	private final double sum, avg, max, min;
+	private final long count;
 
-	public Statistic(double sum, double avg, double max, double min, long count) {
+	@JsonCreator
+	public Statistic(
+	        @JsonProperty("sum") double sum, 
+	        @JsonProperty("avg") double avg, 
+	        @JsonProperty("max") double max, 
+	        @JsonProperty("min") double min, 
+	        @JsonProperty("count") long count) {
 		this.sum = sum;
 		this.avg = avg;
 		this.max = max;
