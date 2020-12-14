@@ -71,12 +71,9 @@ public class ServiceTest {
     	int numIter = 100;
         ExecutorService threadPool = Executors.newFixedThreadPool(numThreads);
         for (int i = 0; i < numThreads; i++) {
-            threadPool.submit(new Runnable() {
-                public void run() {
-                    for (int i=0; i < numIter; i++) {
-                    Transaction transaction = new Transaction(10, System.currentTimeMillis());
-                    service.addTransaction(transaction);
-                    }
+            threadPool.submit(() -> {
+                for (int j=0; j < numIter; j++) {
+                    service.addTransaction(new Transaction(10, System.currentTimeMillis()));
                 }
             });
         }
