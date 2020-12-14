@@ -1,7 +1,9 @@
 package com.alekseyk99.springboot.service;
 
 import static org.junit.Assert.*;
-
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 import com.alekseyk99.springboot.dto.Statistic;
 import com.alekseyk99.springboot.dto.Transaction;
@@ -58,5 +60,39 @@ public class ServiceTest {
 		assertEquals("Step5 Count", 0, statistic.getCount());
 		
 	}
+
+	@Test
+	public void testMultiThread() throws InterruptedException {
+
+        TransactionStatisticsService service = new TransactionStatisticsService();
+        
+        long startMillis = System.currentTimeMillis();
+    	int numThreads = 100;
+    	int numIter = 100;
+        ExecutorService threadPool = Executors.newFixedThreadPool(numThreads);
+        for (int i = 0; i < numThreads; i++) {
+            threadPool.submit(new Runnable() {
+                public void run() {
+                    for (int i=0; i < numIter; i++) {
+                    Transaction transaction = new Transaction(10, System.currentTimeMillis());
+                    service.addTransaction(transaction);
+                    }
+                }
+            });
+        }
+        threadPool.shutdown();
+        threadPool.awaitTermination(1, TimeUnit.SECONDS);
+        long totalMillis = System.currentTimeMillis() - startMillis;
+        Statistic statistic = service.getStatistic();
+        
+        assertEquals("Step5 Sum", 100000, statistic.getSum(), DELTA);
+        assertEquals("Step5 Min", 10, statistic.getMin(), DELTA);
+        assertEquals("Step5 Max", 10, statistic.getMax(), DELTA);
+        assertEquals("Step5 Avg", 10, statistic.getAvg(), DELTA);
+        assertEquals("Step5 Count", 10000, statistic.getCount());
+        
+        System.out.println(String.format("totalMillis=%s", totalMillis)); 
+
+    }
 
 }
