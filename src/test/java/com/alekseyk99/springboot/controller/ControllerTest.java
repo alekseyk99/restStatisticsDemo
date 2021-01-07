@@ -18,6 +18,7 @@ import org.springframework.web.context.WebApplicationContext;
 import com.alekseyk99.springboot.WebApplication;
 import com.alekseyk99.springboot.dto.Statistic;
 import com.alekseyk99.springboot.dto.Transaction;
+import com.alekseyk99.springboot.service.CustomFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -33,13 +34,16 @@ public class ControllerTest {
         this.objectMapper = new ObjectMapper();
     }
     
-    
     @Autowired
     private WebApplicationContext wac;
 
+    @Autowired
+    private CustomFilter filter;
+
     @Before
     public void setup() throws Exception {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
+                .addFilters(filter).build();
     }
     
 	@Test

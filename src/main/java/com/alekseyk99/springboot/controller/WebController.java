@@ -1,8 +1,7 @@
 package com.alekseyk99.springboot.controller;
 
-import javax.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,7 +24,7 @@ import com.alekseyk99.springboot.service.TransactionStatisticsService;
 public class WebController {
 	
    TransactionStatisticsService service;
-   private static final Logger logger = LoggerFactory.getLogger(WebController.class);
+   private static final Logger logger = LogManager.getLogger(WebController.class);
 
    
    @Autowired
@@ -34,12 +33,18 @@ public class WebController {
    }
 
    @RequestMapping(value="/transactions", method=RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<String> transaction(@RequestBody Transaction transaction) throws Exception {
+   public ResponseEntity<String> transaction(
+           @RequestBody Transaction transaction
+           ) throws Exception {
 
 	   logger.info("POST transactions [{}]", transaction.toString());
     	
-	   if (transaction.getAmount() == 0) throw new IllegalArgumentException("amount can't be 0");
-	   if (transaction.getTimestamp() == 0) throw new IllegalArgumentException("timestamp can't be 0");
+	   if (transaction.getAmount() == 0) { 
+	       throw new IllegalArgumentException("Amount can't be 0");
+	   }
+	   if (transaction.getTimestamp() == 0) {
+	       throw new IllegalArgumentException("Timestamp can't be 0");
+	   }
 			   
        service.addTransaction(transaction);
        return new ResponseEntity<String>(HttpStatus.CREATED);

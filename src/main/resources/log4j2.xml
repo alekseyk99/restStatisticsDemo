@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="60" packages="com.alekseyk99.springboot.service">
+    <Properties>
+        <Property name="console_pattern">[%-5level] %d{yy-MM-dd HH:mm:ss.SSS} [%c] (%t) (%X) - %msg%n</Property>
+    </Properties>
+
+    <Appenders>
+        <Custom name="Custom-Appender">
+            <PatternLayout pattern="[%-5level] %d{yy-MM-dd HH:mm:ss.SSS} [%c] (%t) (%X) - %msg%n"/>
+        </Custom>
+
+        <Console name="Console-Appender" target="SYSTEM_OUT">
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${console_pattern}" />
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="com.alekseyk99" level="INFO">
+            <AppenderRef ref="Custom-Appender"/>
+        </Logger>
+        <Root level="ERROR">
+            <AppenderRef ref="Console-Appender"/>
+        </Root>
+    </Loggers>
+</Configuration>

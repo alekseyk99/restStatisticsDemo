@@ -1,7 +1,7 @@
 package com.alekseyk99.springboot.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import com.alekseyk99.springboot.dto.Statistic;
@@ -17,13 +17,14 @@ import com.alekseyk99.springboot.dto.Transaction;
 @Scope("singleton")
 public class TransactionStatisticsService {
 
-	// size of time period to keep data
-	static final int CAPACITY = 60 ; // 1 minute
-	// size of an interval (time slot) in milliseconds
-	static final long INTERVAL_SIZE = 1000L ; // 1 second
-	private static final Logger logger = LoggerFactory.getLogger(TransactionStatisticsService.class);
+    private static final Logger logger = LogManager.getLogger(TransactionStatisticsService.class);
 
-	final Entry[] entries  = new Entry[CAPACITY];
+	// size of time period to keep data
+	private static final int CAPACITY = 60 ; // 1 minute
+	// size of an interval (time slot) in milliseconds
+	private static final long INTERVAL_SIZE = 1000L ; // 1 second
+
+	private final Entry[] entries  = new Entry[CAPACITY];
 	
    public TransactionStatisticsService() {
         for (int i=0; i< entries.length; i++){
