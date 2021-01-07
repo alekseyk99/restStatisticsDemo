@@ -1,5 +1,6 @@
 package com.alekseyk99.springboot.controller;
 
+import javax.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,18 +36,10 @@ public class WebController {
 
    @RequestMapping(value="/transactions", method=RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
    public ResponseEntity<String> transaction(
-           @RequestBody Transaction transaction
+           @Valid @RequestBody Transaction transaction
            ) throws Exception {
 
 	   logger.info("POST transactions [{}]", transaction.toString());
-    	
-	   if (transaction.getAmount() == 0) { 
-	       throw new IllegalArgumentException("Amount can't be 0");
-	   }
-	   if (transaction.getTimestamp() == 0) {
-	       throw new IllegalArgumentException("Timestamp can't be 0");
-	   }
-			   
        service.addTransaction(transaction);
        return new ResponseEntity<String>(HttpStatus.CREATED);
    }
@@ -57,24 +51,16 @@ public class WebController {
     	logger.info("GET statistics [{}]", statistic.toString());
     	
     	return statistic;
-    }
+   }
 
-   @ExceptionHandler(IllegalArgumentException.class)
-   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-   public void handleIllegalArgumentException(IllegalArgumentException exception) {
-	   logger.error(exception.toString());
-   }
-   
-   @ExceptionHandler(HttpMessageNotReadableException.class)
-   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-   public void handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
-	   logger.error(exception.toString());
-   }
-   
-   @ExceptionHandler
+   @ExceptionHandler({
+       IllegalArgumentException.class, 
+       HttpMessageNotReadableException.class, 
+       MethodArgumentNotValidException.class})
    @ResponseStatus(value = HttpStatus.NO_CONTENT)
    public void handleException(Exception exception) {
-	   logger.error("Exception: ",exception);
+       System.out.println("[handleException]");
+	   logger.error(exception.toString());
    }
    
 }
